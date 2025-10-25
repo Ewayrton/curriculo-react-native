@@ -1,15 +1,10 @@
-import { Text, View } from "react-native";
+import { Box } from '@/components/ui/box';
+import ThemeSwitcher from '@/components/ThemeSwitcher';
 
-export default function Index() {
+export default function App() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </View>
+    <Box className="flex-1 justify-center items-center bg-background-0">
+      <ThemeSwitcher />
+    </Box>
   );
 }
