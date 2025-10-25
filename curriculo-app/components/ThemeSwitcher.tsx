@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useColorScheme } from 'nativewind';
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { Switch } from '@/components/ui/switch';
-import { HStack } from '@/components/ui/hstack';
+import { useColorScheme } from 'nativewind';
 
 export default function ThemeSwitcher() {
   const { colorScheme, setColorScheme } = useColorScheme();
@@ -13,24 +12,20 @@ export default function ThemeSwitcher() {
     setIsDarkMode(colorScheme === 'dark');
   }, [colorScheme]);
 
-  const toggleDarkMode = () => {
-    const newColorScheme = isDarkMode ? 'light' : 'dark';
-    setIsDarkMode(!isDarkMode);
-    setColorScheme(newColorScheme);
+  const toggleDarkMode = (value: boolean) => {
+    setIsDarkMode(value);
+    setColorScheme(value ? 'dark' : 'light');
   };
 
   return (
-    <Box className="p-4">
-      <HStack className="space-x-2 items-center">
-        <Text className="text-typography-900 dark:text-typography-50">
-          Modo: {isDarkMode ? 'Escuro' : 'Claro'}
-        </Text>
-        <Switch
-          isChecked={isDarkMode}
-          onChange={toggleDarkMode}
-          aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-        />
-      </HStack>
+    <Box className="flex-row items-center">
+      <Text className="text-2xl mr-5 text-typography-900">
+        Modo: {isDarkMode ? 'Escuro' : 'Claro'}
+      </Text>
+      <Switch
+        value={isDarkMode}
+        onValueChange={toggleDarkMode}
+      />
     </Box>
   );
 }
