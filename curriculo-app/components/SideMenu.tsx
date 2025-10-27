@@ -1,81 +1,104 @@
-import React, { useRef, useState } from "react";
-import { Animated, TouchableOpacity } from "react-native";
-import { Box } from "@/components/ui/box";
-import { Text } from "@/components/ui/text";
-import { useColorScheme } from "nativewind";
-import { Moon, Sun, Menu } from "lucide-react-native";
+import React from 'react';
+import {
+  Drawer,
+  DrawerBackdrop,
+  DrawerContent,
+  DrawerHeader,
+  DrawerBody,
+  DrawerFooter,
+} from '@/components/ui/drawer';
+import { Button, ButtonText, ButtonIcon } from '@/components/ui/button';
+import { Text } from '@/components/ui/text';
+import { VStack } from '@/components/ui/vstack';
+import { Pressable } from '@/components/ui/pressable';
+import { Divider } from '@/components/ui/divider';
+import {
+  Avatar,
+  AvatarFallbackText,
+  AvatarImage,
+} from '@/components/ui/avatar';
+import { Icon } from '@/components/ui/icon';
+import { User, Home, ShoppingCart, Wallet, LogOut, Menu } from 'lucide-react-native';
 
-export default function SideMenu({ children }: { children: React.ReactNode }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const slideAnim = useRef(new Animated.Value(-250)).current; // menu começa escondido
-  const { colorScheme, setColorScheme } = useColorScheme();
+type SideMenuProps = {
+  children?: React.ReactNode;
+};
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-    Animated.timing(slideAnim, {
-      toValue: menuOpen ? -250 : 0,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  };
+export default function SideMenu({ children }: SideMenuProps) {
+  const [showDrawer, setShowDrawer] = React.useState(false);
 
-  const toggleTheme = () => {
-    setColorScheme(colorScheme === "dark" ? "light" : "dark");
+  // toggle simples (abre se fechado e fecha se aberto)
+  const toggleDrawer = () => {
+    setShowDrawer(prev => !prev);
   };
 
   return (
-    <Box className="flex-1 bg-background-0">
-      {/* Botão Sanduíche */}
-      <TouchableOpacity onPress={toggleMenu} style={{ padding: 16 }}>
-        <Menu size={28} color={colorScheme === "dark" ? "white" : "black"} />
-      </TouchableOpacity>
-
-      {/* Conteúdo principal */}
-      {children}
-
-      {/* Menu lateral animado */}
-      <Animated.View
-        style={{
-          position: "absolute",
-          left: slideAnim,
-          top: 0,
-          bottom: 0,
-          width: 250,
-          backgroundColor: colorScheme === "dark" ? "#1e1e1e" : "#fff",
-          shadowColor: "#000",
-          shadowOpacity: 0.3,
-          shadowRadius: 5,
-          elevation: 5,
-          paddingTop: 60,
-          paddingHorizontal: 20,
-        }}
+    <>
+      {/* Barra superior com o ícone de sanduíche no canto esquerdo */}
+      <Pressable
+        onPress={toggleDrawer}
+        className="absolute top-4 left-4 z-50 p-2 rounded-md"
+        accessibilityLabel="Open menu"
+        hitSlop={8} // aumenta área de toque (pode depender do componente Pressable)
       >
-        <Text className="text-xl font-bold mb-5 text-typography-900">
-          Menu
-        </Text>
+        <Icon as={Menu} size="xl" className="text-typography-700" />
+      </Pressable>
 
-        {/* Opções do menu */}
-        <TouchableOpacity onPress={toggleTheme}>
-          <Box className="flex-row items-center mb-5">
-            {colorScheme === "dark" ? (
-              <Sun size={20} color="#facc15" />
-            ) : (
-              <Moon size={20} color="#0ea5e9" />
-            )}
-            <Text className="ml-3 text-lg text-typography-900">
-              Alternar Tema
-            </Text>
-          </Box>
-        </TouchableOpacity>
+      {/* Drawer */}
+      <Drawer isOpen={showDrawer} onClose={() => setShowDrawer(false)}>
+        <DrawerBackdrop />
+        <DrawerContent className="w-[270px] md:w-[300px]">
+          <DrawerHeader className="justify-center flex-col gap-2">
+            <Avatar size="2xl">
+              <AvatarFallbackText>User Image</AvatarFallbackText>
+              <AvatarImage
+                source={{
+                  uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=687&q=80',
+                }}
+              />
+            </Avatar>
+            <VStack className="justify-center items-center">
+              <Text size="lg">User Name</Text>
+              <Text size="sm" className="text-typography-600">
+                abc@gmail.com
+              </Text>
+            </VStack>
+          </DrawerHeader>
 
-        <TouchableOpacity onPress={() => alert("Navegar para tela X")}>
-          <Text className="text-lg text-typography-900 mb-3">Página 1</Text>
-        </TouchableOpacity>
+          <Divider className="my-4" />
 
-        <TouchableOpacity onPress={() => alert("Navegar para tela Y")}>
-          <Text className="text-lg text-typography-900">Página 2</Text>
-        </TouchableOpacity>
-      </Animated.View>
-    </Box>
+          <DrawerBody contentContainerClassName="gap-2">
+            <Pressable className="gap-3 flex-row items-center hover:bg-background-50 p-2 rounded-md">
+              <Icon as={User} size="lg" className="text-typography-600" />
+              <Text>My Profile</Text>
+            </Pressable>
+
+            <Pressable className="gap-3 flex-row items-center hover:bg-background-50 p-2 rounded-md">
+              <Icon as={Home} size="lg" className="text-typography-600" />
+              <Text>Saved Address</Text>
+            </Pressable>
+
+            <Pressable className="gap-3 flex-row items-center hover:bg-background-50 p-2 rounded-md">
+              <Icon as={ShoppingCart} size="lg" className="text-typography-600" />
+              <Text>Orders</Text>
+            </Pressable>
+
+            <Pressable className="gap-3 flex-row items-center hover:bg-background-50 p-2 rounded-md">
+              <Icon as={Wallet} size="lg" className="text-typography-600" />
+              <Text>Saved Cards</Text>
+            </Pressable>
+          </DrawerBody>
+
+          <DrawerFooter>
+            <Button className="w-full gap-2" variant="outline" action="secondary" onPress={() => setShowDrawer(false)}>
+              <ButtonText>Logout</ButtonText>
+              <ButtonIcon as={LogOut} />
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+      
+      {children}
+    </>
   );
 }
