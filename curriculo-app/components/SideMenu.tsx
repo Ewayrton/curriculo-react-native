@@ -1,11 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import {
-  Button,
   DrawerLayoutAndroid,
   Text,
-  StyleSheet,
   View,
+  Pressable,
 } from 'react-native';
+import ThemeSwitcher from './ThemeSwitcher';
+import { Button, ButtonText } from '@/components/ui/button';
 
 type DrawerLayoutProps = {
   children: React.ReactNode;
@@ -13,16 +14,18 @@ type DrawerLayoutProps = {
 
 const SideMenu: React.FC<DrawerLayoutProps> = ({ children }) => {
   const drawer = useRef<DrawerLayoutAndroid>(null);
-  const [drawerPosition, setDrawerPosition] = useState<'left' | 'right'>('left');
-
-  const changeDrawerPosition = () => {
-    setDrawerPosition(drawerPosition === 'left' ? 'right' : 'left');
-  };
 
   const navigationView = () => (
-    <View style={[styles.container, styles.navigationContainer]}>
-      <Text style={styles.paragraph}>I'm in the Drawer!</Text>
-      <Button title="Close drawer" onPress={() => drawer.current?.closeDrawer()} />
+    <View className="flex-1 p-4 items-center bg-gray-100 dark:bg-gray-800"
+    >
+      <ThemeSwitcher className="absolute top-2 left-5" />
+
+      <Button
+        className="absolute bottom-5 w-2/4 bg-sky-400" // Aplicado diretamente
+        onPress={() => drawer.current?.closeDrawer()}
+      >
+        <ButtonText>Fechar menu</ButtonText>
+      </Button>
     </View>
   );
 
@@ -30,45 +33,31 @@ const SideMenu: React.FC<DrawerLayoutProps> = ({ children }) => {
     <DrawerLayoutAndroid
       ref={drawer}
       drawerWidth={300}
-      drawerPosition={drawerPosition}
+      drawerPosition={'left'}
       renderNavigationView={navigationView}
     >
-      <View style={styles.container}>
-        {/* Cabeçalho fixo do Drawer */}
-        <Text style={styles.paragraph}>Drawer on the {drawerPosition}!</Text>
-
-        <Button title="Change Drawer Position" onPress={changeDrawerPosition} />
-
-        <Button title="Open drawer" onPress={() => drawer.current?.openDrawer()} />
-
-        {/* Conteúdo da página */}
-        <View style={styles.content}>{children}</View>
+      {/* A prop 'style' foi removida daqui */}
+      <View
+        // Define a cor de fundo principal com base no tema
+        className="flex-1 p-4 bg-white dark:bg-gray-900"
+      >
+        {/* Botão para abrir o menu */}
+        <Pressable
+          onPress={() => drawer.current?.openDrawer()}
+          // Conversão do style={styles.menuButton} para className
+          className="absolute top-2.5 left-2.5 p-2.5 z-10"
+        >
+          {/* Conversão do style={styles.iconStyle} e da cor dinâmica */}
+          <Text
+            className="text-2xl text-black dark:text-white"
+          >
+            ☰
+          </Text>
+        </Pressable>
+        <View className="flex-1 justify-center items-center">{children}</View>
       </View>
     </DrawerLayoutAndroid>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  navigationContainer: {
-    backgroundColor: '#000000ff',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  paragraph: {
-    padding: 16,
-    fontSize: 15,
-    textAlign: 'center',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default SideMenu;
