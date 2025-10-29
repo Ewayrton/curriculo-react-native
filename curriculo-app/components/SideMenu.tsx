@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
 import {
   DrawerLayoutAndroid,
-  Text,
   View,
   Pressable,
 } from 'react-native';
 import ThemeSwitcher from './ThemeSwitcher';
 import { Button, ButtonText } from '@/components/ui/button';
+import { Icon } from '@/components/ui/icon';
+import { Menu } from 'lucide-react-native';
 
 type DrawerLayoutProps = {
   children: React.ReactNode;
@@ -21,7 +22,7 @@ const SideMenu: React.FC<DrawerLayoutProps> = ({ children }) => {
       <ThemeSwitcher className="absolute top-2 left-5" />
 
       <Button
-        className="absolute bottom-5 w-2/4 bg-sky-400" // Aplicado diretamente
+        className="absolute bottom-5 w-2/4 bg-sky-400"
         onPress={() => drawer.current?.closeDrawer()}
       >
         <ButtonText>Fechar menu</ButtonText>
@@ -36,7 +37,6 @@ const SideMenu: React.FC<DrawerLayoutProps> = ({ children }) => {
       drawerPosition={'left'}
       renderNavigationView={navigationView}
     >
-      {/* A prop 'style' foi removida daqui */}
       <View
         // Define a cor de fundo principal com base no tema
         className="flex-1 p-4 bg-white dark:bg-gray-900"
@@ -44,15 +44,12 @@ const SideMenu: React.FC<DrawerLayoutProps> = ({ children }) => {
         {/* Botão para abrir o menu */}
         <Pressable
           onPress={() => drawer.current?.openDrawer()}
-          // Conversão do style={styles.menuButton} para className
           className="absolute top-2.5 left-2.5 p-2.5 z-10"
         >
-          {/* Conversão do style={styles.iconStyle} e da cor dinâmica */}
-          <Text
-            className="text-2xl text-black dark:text-white"
-          >
-            ☰
-          </Text>
+          <Icon 
+            as={Menu} 
+            className="text-2xl text-black dark:text-white "
+          />
         </Pressable>
         <View className="flex-1 justify-center items-center">{children}</View>
       </View>
