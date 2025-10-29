@@ -11,7 +11,7 @@ type DrawerLayoutProps = {
   children: React.ReactNode;
 };
 
-const DrawerLayout: React.FC<DrawerLayoutProps> = ({ children }) => {
+const SideMenu: React.FC<DrawerLayoutProps> = ({ children }) => {
   const drawer = useRef<DrawerLayoutAndroid>(null);
   const [drawerPosition, setDrawerPosition] = useState<'left' | 'right'>('left');
 
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   navigationContainer: {
-    backgroundColor: '#ecf0f1',
+    backgroundColor: '#000000ff',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -71,4 +71,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DrawerLayout;
+export default SideMenu;
