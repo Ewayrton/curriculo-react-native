@@ -1,18 +1,15 @@
 import { Drawer } from "expo-router/drawer";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
-import { useColorScheme } from "nativewind";
-import { useEffect } from "react";
-import "@/global.css";
 import SideMenu from "@/components/SideMenu";
+import "@/global.css";
+import type { DrawerContentComponentProps } from "@react-navigation/drawer";
+import { useColorScheme } from "nativewind";
+import React from "react";
 
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
-
-  useEffect(() => {
-    // força re-render quando muda o tema
-  }, [colorScheme]);
 
   return (
     <GluestackUIProvider>
@@ -21,24 +18,26 @@ export default function RootLayout() {
           screenOptions={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: isDark ? "#111827" : "#f9fafb", // dark / light
+              backgroundColor: isDark ? "#1f2937" : "#DFEFF4",
             },
-            headerTintColor: isDark ? "#f3f4f6" : "#111827",
+            headerTitleStyle: {
+              color: isDark ? "#fff" : "#000",
+              fontWeight: "bold",
+            },
+            headerTintColor: isDark ? "#fff" : "#000",
             drawerStyle: {
-              backgroundColor: isDark ? "#1f2937" : "#f3f4f6",
-              width: 300,
+              backgroundColor: "transparent",
+              width: "70%",
             },
-            drawerActiveTintColor: isDark ? "#60a5fa" : "#0284c7",
-            drawerInactiveTintColor: isDark ? "#d1d5db" : "#374151",
           }}
-          drawerContent={(props) => <SideMenu {...props} />}
+          drawerContent={(props: DrawerContentComponentProps) => (
+            <SideMenu {...props} />
+          )}
         >
           <Drawer.Screen
             name="index"
             options={{
-              title: "Início",
-              // ✅ AQUI colocamos o fundo principal da tela (substitui o sceneContainerStyle)
-              drawerItemStyle: { display: "none" }, // oculta o item "index" da lista do menu
+              title: "Ewayrton Brito de Oliveira - DEV",
             }}
           />
         </Drawer>

@@ -31,7 +31,7 @@ export default function SideMenu(props: DrawerContentComponentProps) {
         <ThemeSwitcher className="mb-6 mt-2" />
 
         <Button
-          className="absolute bottom-5 w-2/4 bg-sky-400"
+          className="absolute bottom-5 w-2/4 bg-[#4B8AC8]"
           onPress={() => navigation.closeDrawer()}
         >
           <ButtonText>Fechar menu</ButtonText>
