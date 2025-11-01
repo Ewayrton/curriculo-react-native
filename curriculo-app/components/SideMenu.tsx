@@ -29,6 +29,12 @@ export default function SideMenu(props: DrawerContentComponentProps) {
         }}
       >
         <ThemeSwitcher className="mb-6 mt-2" />
+        <Button
+          variant="link" className="mb-4"
+          onPress={() => navigation.navigate("(main)", { screen: "projects" })}
+        >
+          <ButtonText>Projetos</ButtonText>
+        </Button>
 
         <Button
           className="absolute bottom-5 w-2/4 bg-[#4B8AC8]"
