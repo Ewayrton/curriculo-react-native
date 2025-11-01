@@ -40,6 +40,14 @@ export default function RootLayout() {
               title: "Ewayrton Brito de Oliveira - DEV",
             }}
           />
+          <Drawer.Screen
+            name="main" // 1. Registra o grupo de rotas
+            options={{
+              headerShown: false, // 2. Esconde o header do grupo
+              drawerItemStyle: { height: 0 }, // 3. Esconde do menu
+              title: "Principal", // 4. Título de fallback
+            }}
+          />
         </Drawer>
       </GestureHandlerRootView>
     </GluestackUIProvider>

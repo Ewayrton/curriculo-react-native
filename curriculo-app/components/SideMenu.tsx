@@ -31,9 +31,36 @@ export default function SideMenu(props: DrawerContentComponentProps) {
         <ThemeSwitcher className="mb-6 mt-2" />
         <Button
           variant="link" className="mb-4"
-          onPress={() => navigation.navigate("(main)", { screen: "projects" })}
+          onPress={() => navigation.navigate("main", { screen: "projects" })}
         >
           <ButtonText>Projetos</ButtonText>
+        </Button>
+        
+        <Button
+          variant="link" className="mb-4"
+          onPress={() => navigation.navigate("main", { screen: "academic" })}
+        >
+          <ButtonText>Experiência Acadêmica</ButtonText>
+        </Button>
+        <Button
+          variant="link" className="mb-4"
+          onPress={() => navigation.navigate("main", { screen: "work-exp" })}
+        >
+          <ButtonText>Experiência Profissional</ButtonText>
+        </Button>
+
+        <Button
+          variant="link" className="mb-4"
+          onPress={() => navigation.navigate("main", { screen: "skills" })}
+        >
+          <ButtonText>Habilidades</ButtonText>
+        </Button>
+
+        <Button
+          variant="link" className="mb-4"
+          onPress={() => navigation.navigate("main", { screen: "about" })}
+        >
+          <ButtonText>Sobre</ButtonText>
         </Button>
 
         <Button
