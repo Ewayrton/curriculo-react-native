@@ -1,3 +1,5 @@
+// components/SideMenu.tsx (Corrigido)
+
 import React from "react";
 import { View, Image, Pressable } from "react-native";
 import {
@@ -22,26 +24,20 @@ import {
   type LucideIcon,
 } from "lucide-react-native";
 
-// 1. Adicionar "as const" no final do array.
-// Isso diz ao TypeScript que este array é imutável 
-// e seus valores são literais (ex: "/", não string).
 const navItems = [
   { label: "Início", path: "/", icon: Home },
-  { label: "Projetos", path: "/(main)/projects", icon: Briefcase },
-  { label: "Formação", path: "/(main)/academic-exp", icon: GraduationCap },
-  { label: "Experiência", path: "/(main)/work-exp", icon: Building2 },
-  { label: "Habilidades", path: "/(main)/skills", icon: Award },
-  { label: "Sobre", path: "/(main)/about", icon: Info },
-] as const; // <--- CORREÇÃO AQUI
+  { label: "Projetos", path: "/projects", icon: Briefcase },
+  { label: "Formação", path: "/academic-exp", icon: GraduationCap },
+  { label: "Experiência", path: "/work-exp", icon: Building2 },
+  { label: "Habilidades", path: "/skills", icon: Award },
+  { label: "Sobre", path: "/about", icon: Info },
+] as const;
 
-// 2. Criar um tipo dinâmico para as rotas válidas
-// Isso extrai todos os valores de 'path' do array acima.
 type ValidNavPath = typeof navItems[number]["path"];
 
-// 3. Atualizar a interface de props
 type DrawerItemProps = {
   label: string;
-  path: ValidNavPath; // <--- CORREÇÃO AQUI (usando o tipo dinâmico)
+  path: ValidNavPath;
   icon: LucideIcon;
 };
 
@@ -51,22 +47,18 @@ export default function SideMenu(props: DrawerContentComponentProps) {
   const isDark = colorScheme === "dark";
   const pathname = usePathname();
 
+  // Esta função agora vai comparar "/projects" === "/projects" (e vai funcionar)
   const isActive = (path: string) => pathname === path;
 
   // Paleta de cores (sem alteração)
   const bgColor = isDark ? "#1e293b" : "#f1f5f9";
-  const activeBg = isDark ? "#2563EB" : "#dbeafe";
-  const activeText = isDark ? "#ffffff" : "#2563EB";
-  const inactiveText = isDark ? "#cbd5e1" : "#334155";
   const activeIcon = isDark ? "#ffffff" : "#2563EB";
   const inactiveIcon = isDark ? "#94a3b8" : "#475569";
 
-  // 4. Aplicar a tipagem no componente local
   const DrawerItem = ({ label, path, icon: Icon }: DrawerItemProps) => {
     const active = isActive(path);
 
     return (
-      // Agora 'path' tem o tipo correto e o router.push aceita.
       <Pressable onPress={() => router.push(path)}>
         <Box
           className={`
@@ -79,7 +71,7 @@ export default function SideMenu(props: DrawerContentComponentProps) {
             className={`
               ml-4 text-base
               ${active ? (isDark ? "text-white" : "text-blue-600") : (isDark ? "text-slate-300" : "text-slate-700")}
-              ${active ? "font-bold" : "medium"}
+              ${active ? "font-bold" : "font-medium"}
             `}
           >
             {label}
@@ -89,6 +81,7 @@ export default function SideMenu(props: DrawerContentComponentProps) {
     );
   };
 
+  // O resto do componente continua igual
   return (
     <DrawerContentScrollView
       {...props}
@@ -98,10 +91,7 @@ export default function SideMenu(props: DrawerContentComponentProps) {
       }}
     >
       <View style={{ flex: 1, padding: 16 }}>
-        {/* === SEÇÃO SUPERIOR: Perfil e Navegação === */}
         <View style={{ flex: 1 }}>
-          
-          {/* Perfil */}
           <Box className="flex-row items-center px-3 mb-6">
             <Image
               source={require("../assets/images/perfil_app.png")} //
@@ -117,7 +107,6 @@ export default function SideMenu(props: DrawerContentComponentProps) {
             </Box>
           </Box>
 
-          {/* Itens de Navegação */}
           {navItems.map((item) => (
             <DrawerItem
               key={item.path}
@@ -128,7 +117,6 @@ export default function SideMenu(props: DrawerContentComponentProps) {
           ))}
         </View>
 
-        {/* === SEÇÃO INFERIOR: Ações === */}
         <View>
           <ThemeSwitcher className="mb-4" />
           <Button
