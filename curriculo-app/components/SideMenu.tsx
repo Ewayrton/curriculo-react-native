@@ -7,6 +7,7 @@ import {
 import { Button, ButtonText } from "@/components/ui/button";
 import ThemeSwitcher from "./ThemeSwitcher";
 import { useColorScheme } from "nativewind";
+import { router } from "expo-router";
 
 export default function SideMenu(props: DrawerContentComponentProps) {
   const { navigation } = props;
@@ -29,37 +30,24 @@ export default function SideMenu(props: DrawerContentComponentProps) {
         }}
       >
         <ThemeSwitcher className="mb-6 mt-2" />
-        <Button
-          variant="link" className="mb-4"
-          onPress={() => navigation.navigate("main", { screen: "projects" })}
-        >
+
+        <Button variant="link" className="mb-4" onPress={() => router.push("/projects")}>
           <ButtonText>Projetos</ButtonText>
         </Button>
-        
-        <Button
-          variant="link" className="mb-4"
-          onPress={() => navigation.navigate("main", { screen: "academic" })}
-        >
+
+        <Button variant="link" className="mb-4" onPress={() => router.push("/academic-exp")}>
           <ButtonText>Experiência Acadêmica</ButtonText>
         </Button>
-        <Button
-          variant="link" className="mb-4"
-          onPress={() => navigation.navigate("main", { screen: "work-exp" })}
-        >
+
+        <Button variant="link" className="mb-4" onPress={() => router.push("/work-exp")}>
           <ButtonText>Experiência Profissional</ButtonText>
         </Button>
 
-        <Button
-          variant="link" className="mb-4"
-          onPress={() => navigation.navigate("main", { screen: "skills" })}
-        >
+        <Button variant="link" className="mb-4" onPress={() => router.push("/skills")}>
           <ButtonText>Habilidades</ButtonText>
         </Button>
 
-        <Button
-          variant="link" className="mb-4"
-          onPress={() => navigation.navigate("main", { screen: "about" })}
-        >
+        <Button variant="link" className="mb-4" onPress={() => router.push("/about")}>
           <ButtonText>Sobre</ButtonText>
         </Button>
 

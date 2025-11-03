@@ -41,7 +41,7 @@ export default function RootLayout() {
             }}
           />
           <Drawer.Screen
-            name="main" // 1. Registra o grupo de rotas
+            name="(main)" // 1. Registra o grupo de rotas
             options={{
               headerShown: false, // 2. Esconde o header do grupo
               drawerItemStyle: { height: 0 }, // 3. Esconde do menu
