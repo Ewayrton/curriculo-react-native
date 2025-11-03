@@ -34,19 +34,34 @@ export default function RootLayout() {
             <SideMenu {...props} />
           )}
         >
+          {/* Tela principal */}
           <Drawer.Screen
             name="index"
             options={{
               title: "Ewayrton Brito de Oliveira - DEV",
             }}
           />
+
+          {/* Páginas dentro de (main) — todas agora fazem parte do Drawer */}
           <Drawer.Screen
-            name="(main)" // 1. Registra o grupo de rotas
-            options={{
-              headerShown: false, // 2. Esconde o header do grupo
-              drawerItemStyle: { height: 0 }, // 3. Esconde do menu
-              title: "Principal", // 4. Título de fallback
-            }}
+            name="(main)/projects"
+            options={{ title: "Meus Projetos" }}
+          />
+          <Drawer.Screen
+            name="(main)/academic-exp"
+            options={{ title: "Experiência Acadêmica" }}
+          />
+          <Drawer.Screen
+            name="(main)/work-exp"
+            options={{ title: "Experiência Profissional" }}
+          />
+          <Drawer.Screen
+            name="(main)/skills"
+            options={{ title: "Habilidades" }}
+          />
+          <Drawer.Screen
+            name="(main)/about"
+            options={{ title: "Sobre" }}
           />
         </Drawer>
       </GestureHandlerRootView>
