@@ -12,7 +12,7 @@ export default function RootLayout() {
   const isDark = colorScheme === "dark";
 
   return (
-    <GluestackUIProvider>
+    <GluestackUIProvider mode={colorScheme}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Drawer
           screenOptions={{
@@ -34,35 +34,15 @@ export default function RootLayout() {
             <SideMenu {...props} />
           )}
         >
-          {/* Tela principal */}
           <Drawer.Screen
             name="index"
-            options={{
-              title: "Ewayrton Brito de Oliveira - DEV",
-            }}
+            options={{ title: "Ewayrton Brito de Oliveira - DEV" }}
           />
-
-          {/* Páginas dentro de (main) — todas agora fazem parte do Drawer */}
-          <Drawer.Screen
-            name="(main)/projects"
-            options={{ title: "Meus Projetos" }}
-          />
-          <Drawer.Screen
-            name="(main)/academic-exp"
-            options={{ title: "Experiência Acadêmica" }}
-          />
-          <Drawer.Screen
-            name="(main)/work-exp"
-            options={{ title: "Experiência Profissional" }}
-          />
-          <Drawer.Screen
-            name="(main)/skills"
-            options={{ title: "Habilidades" }}
-          />
-          <Drawer.Screen
-            name="(main)/about"
-            options={{ title: "Sobre" }}
-          />
+          <Drawer.Screen name="(main)/projects" options={{ title: "Meus Projetos" }} />
+          <Drawer.Screen name="(main)/academic-exp" options={{ title: "Experiência Acadêmica" }} />
+          <Drawer.Screen name="(main)/work-exp" options={{ title: "Experiência Profissional" }} />
+          <Drawer.Screen name="(main)/skills" options={{ title: "Habilidades" }} />
+          <Drawer.Screen name="(main)/about" options={{ title: "Sobre" }} />
         </Drawer>
       </GestureHandlerRootView>
     </GluestackUIProvider>

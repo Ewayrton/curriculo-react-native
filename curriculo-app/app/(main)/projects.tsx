@@ -1,24 +1,18 @@
 import React from "react";
-import { SafeAreaView } from "react-native";
-import { Box } from "@/components/ui/box";
 import { Text } from "@/components/ui/text";
+import AppBackground from "@/components/AppBackground";
+import { Box } from "@/components/ui/box";
 
 export default function ProjectsScreen() {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#DFEFF4" }}>
-      <Box className="flex-4xl pt-20 items-center justify-center bg-[#DFEFF4]">
-        <Text
-  className="text-4xl font-bold"
-  style={{
-    color: "#72b5f7ff",
-    textShadowColor: "#d1d1d1ff",   // Cor da sombra
-    textShadowOffset: { width: 2, height: 2 }, // Deslocamento da sombra
-    textShadowRadius: 4,       // Quanto a sombra se espalha
-  }}
->
-  MEUS PROJETOS
-</Text>
+    <AppBackground scrollable>
+      <Box className="pt-20 items-center justify-center">
+        <Text className="text-4xl font-bold text-[#72b5f7ff] dark:text-[#93C5FD]">
+          MEUS PROJETOS
+        </Text>
       </Box>
-    </SafeAreaView>
+
+      {/* ... mais conteúdo com rolagem */}
+    </AppBackground>
   );
 }
