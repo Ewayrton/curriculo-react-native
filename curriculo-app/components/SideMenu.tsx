@@ -45,6 +45,25 @@ export default function SideMenu(props: DrawerContentComponentProps) {
         <Button
           variant="link"
           className="mb-4"
+          onPress={() => router.push("/")}
+        >
+          <ButtonText
+            style={{
+              color: isActive("/")
+                ? activeColor
+                : isDark
+                ? "#fff"
+                : "#000",
+              fontWeight: isActive("/") ? "bold" : "normal",
+            }}
+          >
+            Início
+          </ButtonText>
+        </Button>
+        
+        <Button
+          variant="link"
+          className="mb-4"
           onPress={() => router.push("/(main)/projects")}
         >
           <ButtonText

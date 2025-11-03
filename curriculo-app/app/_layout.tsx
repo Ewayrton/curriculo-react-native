@@ -18,17 +18,26 @@ export default function RootLayout() {
           screenOptions={{
             headerShown: true,
             headerStyle: {
-              backgroundColor: isDark ? "#1f2937" : "#DFEFF4",
+              backgroundColor: isDark ? "#1f2937" : "#F0F4F8",
+              shadowColor: isDark ? "#000" : "#aaa",
+              shadowOpacity: 0.3,
+              shadowRadius: 4,
+              elevation: 5, // sombra no Android
+              borderBottomWidth: 0,
             },
             headerTitleStyle: {
-              color: isDark ? "#fff" : "#000",
-              fontWeight: "bold",
+              color: isDark ? "#E0E7FF" : "#1F2937", // cor texto suave e elegante
+              fontWeight: "700",
+              fontSize: 20,
+              letterSpacing: 0.5,
             },
-            headerTintColor: isDark ? "#fff" : "#000",
+            headerTintColor: isDark ? "#fff" : "#1F2937",
             drawerStyle: {
               backgroundColor: "transparent",
               width: "70%",
             },
+            headerTitleAlign: "center",
+
           }}
           drawerContent={(props: DrawerContentComponentProps) => (
             <SideMenu {...props} />

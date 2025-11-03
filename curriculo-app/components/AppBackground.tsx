@@ -7,39 +7,44 @@ type AppBackgroundProps = {
   scrollable?: boolean;
 };
 
-export default function AppBackground({ children, scrollable = false }: AppBackgroundProps) {
+export default function AppBackground({ children, scrollable = true }: AppBackgroundProps) {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  // 🎨 Cores fixas (sem gradiente)
+  // Cor sólida conforme tema
   const backgroundColor = isDark ? "#0F172A" : "#DFEFF4";
 
   const content = (
-    <View style={[styles.inner, { backgroundColor }]}>
+    <View style={[styles.contentContainer]}>
       {children}
     </View>
   );
 
-  return scrollable ? (
-    <ScrollView
-      contentContainerStyle={[styles.scroll, { backgroundColor }]}
-      showsVerticalScrollIndicator={false}
-      bounces={true}
-      overScrollMode="always"
-    >
-      {content}
-    </ScrollView>
-  ) : (
-    content
+  return (
+    <View style={[styles.flex, { backgroundColor }]}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        bounces
+        overScrollMode="always"
+      >
+        {content}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  inner: {
+  flex: {
     flex: 1,
-    minHeight: "100%",
   },
-  scroll: {
+  scrollContent: {
+    paddingVertical: 40,
+    paddingHorizontal: 24,
     flexGrow: 1,
+    justifyContent: "flex-start",
+  },
+  contentContainer: {
+    flex: 1,
   },
 });

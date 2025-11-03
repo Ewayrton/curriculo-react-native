@@ -3,48 +3,69 @@ import { Image } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Box } from "@/components/ui/box";
 import WorkButton from "@/components/WorkButton";
+import { MotiView } from "moti";
 import GradientBackground from "@/components/GradientBrackground";
 
 export default function IndexScreen() {
   return (
     <GradientBackground>
-      <Box className="flex-1 justify-center items-center">
-
-        {/* Título */}
-        <Box className="items-center mb-10">
-          <Text className="text-4xl font-bold text-white">
-            MEU CURRÍCULO
+      <Box className="flex-1 justify-center items-center px-10">
+        {/* Título com animação */}
+        <MotiView
+          from={{ opacity: 0, translateY: -20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ delay: 200, duration: 800 }}
+        >
+          <Text className="text-4xl font-bold text-white mb-10 tracking-wide">
+            CURRÍCULO
           </Text>
-        </Box>
+        </MotiView>
 
-        {/* Foto de perfil */}
-        <Box className="items-center mb-10">
+        {/* Imagem com fade suave */}
+        <MotiView
+          from={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 400, duration: 800 }}
+        >
           <Image
-            source={require("@/assets/images/perfil_app.png")}
-            className="w-40 h-40 rounded-full border-4 border-white"
+            source={require("../assets/images/perfil_app.png")}
+            className="w-36 h-36 rounded-full mb-8 border-4 border-white shadow-lg"
             resizeMode="cover"
           />
-        </Box>
+        </MotiView>
 
         {/* Subtítulo */}
-        <Box className="items-center mb-4">
-          <Text className="text-3xl font-semibold text-white">
-            Desenvolvedor React-Native
+        <MotiView
+          from={{ opacity: 0, translateY: 10 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ delay: 600, duration: 700 }}
+        >
+          <Text className="text-2xl font-semibold text-white mb-3">
+            Desenvolvedor React Native
           </Text>
-        </Box>
+        </MotiView>
 
         {/* Descrição */}
-        <Box className="items-center px-10">
-          <Text className="text-base text-white text-center">
-            Construo aplicações mobile usando React Native e Expo.
+        <MotiView
+          from={{ opacity: 0, translateY: 10 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ delay: 800, duration: 700 }}
+        >
+          <Text className="text-base text-white text-center leading-6 mb-10 opacity-90">
+            Construo aplicações mobile com foco em experiência, performance e design intuitivo.
           </Text>
-        </Box>
+        </MotiView>
 
-        {/* Botão de ação */}
-        <Box className="mt-10">
-          <WorkButton />
-        </Box>
-
+        {/* Botão */}
+        <MotiView
+          from={{ opacity: 0, translateY: 10 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ delay: 1000, duration: 700 }}
+        >
+          <Box className="mt-2">
+            <WorkButton />
+          </Box>
+        </MotiView>
       </Box>
     </GradientBackground>
   );
