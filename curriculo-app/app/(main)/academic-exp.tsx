@@ -2,22 +2,40 @@ import React from "react";
 import { SafeAreaView } from "react-native";
 import { Box } from "@/components/ui/box";
 import { Text } from "@/components/ui/text";
+import { RefreshScrollView } from "@/components/RefreshScrollView";
+import { useColorScheme } from "nativewind"; // 1. Importar
+
+// (Opcional) Helper para simular delay
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export default function AcademicScreen() {
+  
+  // 2. Lógica do tema
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const backgroundColor = isDark ? "#0F172A" : "#DFEFF4";
+
+  const loadData = async () => {
+    console.log("Buscando dados da página FORMAÇÃO...");
+    await wait(2000); 
+    console.log("Dados da página FORMAÇÃO carregados!");
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#DFEFF4" }}>
-      <Box className="flex-4xl pt-20 items-center justify-center bg-[#DFEFF4]">
-        <Text className="text-4xl font-bold"
-        style={{
-            color: "#72b5f7ff",
-            textShadowColor: "#d1d1d1ff",   // Cor da sombra
-            textShadowOffset: { width: 2, height: 2 }, // Deslocamento da sombra
-            textShadowRadius: 4,       // Quanto a sombra se espalha
+    // 3. Aplicar a cor dinâmica no SafeAreaView
+    <SafeAreaView style={{ flex: 1, backgroundColor: backgroundColor }}>
+      <RefreshScrollView
+        onRefresh={loadData}
+        scrollViewProps={{
+          style: { flex: 1 },
+          contentContainerStyle: { flex: 1 } 
         }}
-        >
-        EXPERIENCIA ACADEMICA
-        </Text>
-      </Box>
+      >
+        {/* 4. Remover a cor fixa do Box (bg-transparent) */}
+        <Box className="flex-1 pt-20 items-center justify-center bg-transparent">
+          
+        </Box>
+      </RefreshScrollView>
     </SafeAreaView>
   );
 }

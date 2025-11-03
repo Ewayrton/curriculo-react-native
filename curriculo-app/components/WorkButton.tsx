@@ -26,12 +26,11 @@ export default function WorkButton() {
         withTiming(1.05, { duration: 700 }),
         withTiming(1, { duration: 700 })
       ),
-      -1, // infinito
-      true // alternar direção
+      -1,
+      true 
     );
   }, [scale]);
 
-  // estilo animado com Reanimated
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));

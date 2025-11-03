@@ -1,3 +1,5 @@
+// app/index.tsx (Atualizado)
+
 import React from "react";
 import { Image } from "react-native";
 import { Text } from "@/components/ui/text";
@@ -6,10 +8,27 @@ import WorkButton from "@/components/WorkButton";
 import { MotiView } from "moti";
 import GradientBackground from "@/components/GradientBrackground";
 
+// (Opcional) Helper para simular delay
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export default function IndexScreen() {
+
+  // 1. Adicionar a função de carregar dados
+  const loadData = async () => {
+    console.log("Buscando dados da página INDEX...");
+    await wait(1500); 
+    console.log("Dados da página INDEX carregados!");
+  };
+
   return (
-    <GradientBackground>
+    // 2. Passar a função 'onRefresh' para o GradientBackground
+    <GradientBackground onRefresh={loadData}>
+      {/* O Box interno continua igual. 
+        O ScrollView dentro do GradientBackground usará 'flexGrow: 1',
+        então este Box precisa de 'flex: 1' para centralizar o conteúdo.
+      */}
       <Box className="flex-1 justify-center items-center px-10">
+
         {/* Título com animação */}
         <MotiView
           from={{ opacity: 0, translateY: -20 }}
@@ -66,6 +85,7 @@ export default function IndexScreen() {
             <WorkButton />
           </Box>
         </MotiView>
+        
       </Box>
     </GradientBackground>
   );

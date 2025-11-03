@@ -11,7 +11,6 @@ export default function AppBackground({ children, scrollable = true }: AppBackgr
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  // Cor sólida conforme tema
   const backgroundColor = isDark ? "#0F172A" : "#DFEFF4";
 
   const content = (

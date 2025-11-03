@@ -1,18 +1,41 @@
 import React from "react";
-import { Text } from "@/components/ui/text";
-import AppBackground from "@/components/AppBackground";
+import { SafeAreaView } from "react-native";
 import { Box } from "@/components/ui/box";
+import { Text } from "@/components/ui/text";
+import { RefreshScrollView } from "@/components/RefreshScrollView";
+import { useColorScheme } from "nativewind"; // 1. Importar
+
+// (Opcional) Helper para simular delay
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export default function ProjectsScreen() {
-  return (
-    <AppBackground scrollable>
-      <Box className="pt-20 items-center justify-center">
-        <Text className="text-4xl font-bold text-[#72b5f7ff] dark:text-[#93C5FD]">
-          MEUS PROJETOS
-        </Text>
-      </Box>
+  
+  // 2. Lógica do tema
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const backgroundColor = isDark ? "#0F172A" : "#DFEFF4";
 
-      {/* ... mais conteúdo com rolagem */}
-    </AppBackground>
+  const loadData = async () => {
+    console.log("Buscando dados da página PROJETOS...");
+    await wait(2000); 
+    console.log("Dados da página PROJETOS carregados!");
+  };
+
+  return (
+    // 3. Aplicar a cor dinâmica no SafeAreaView
+    <SafeAreaView style={{ flex: 1, backgroundColor: backgroundColor }}>
+      <RefreshScrollView
+        onRefresh={loadData}
+        scrollViewProps={{
+          style: { flex: 1 },
+          contentContainerStyle: { flex: 1 } 
+        }}
+      >
+        {/* 4. Remover a cor fixa do Box (bg-transparent) */}
+        <Box className="flex-1 pt-20 items-center justify-center bg-transparent">
+         
+        </Box>
+      </RefreshScrollView>
+    </SafeAreaView>
   );
 }
