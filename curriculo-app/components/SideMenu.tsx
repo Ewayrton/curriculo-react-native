@@ -27,8 +27,8 @@ import {
 const navItems = [
   { label: "Início", path: "/", icon: Home },
   { label: "Projetos", path: "/projects", icon: Briefcase },
-  { label: "Formação", path: "/academic-exp", icon: GraduationCap },
-  { label: "Experiência", path: "/work-exp", icon: Building2 },
+  { label: "Experiências Acadêmicas", path: "/academic-exp", icon: GraduationCap },
+  { label: "Experiências Profissionais", path: "/work-exp", icon: Building2 },
   { label: "Habilidades", path: "/skills", icon: Award },
   { label: "Sobre", path: "/about", icon: Info },
 ] as const;
