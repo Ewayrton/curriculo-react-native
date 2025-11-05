@@ -8,7 +8,7 @@ import { useColorScheme } from "nativewind"; // 1. Importar
 // (Opcional) Helper para simular delay
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-export default function WorkExpScreen() {
+export default function AboutScreen() {
   
   // 2. Lógica do tema
   const { colorScheme } = useColorScheme();
