@@ -55,7 +55,7 @@ export default function WorkButton() {
             isDark ? "text-white" : "text-black"
           }`}
         >
-          VEJA MEU TRABALHO
+          CONHECER MAIS
         </Text>
       </Pressable>
     </Animated.View>
