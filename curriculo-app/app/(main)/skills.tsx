@@ -1,7 +1,7 @@
-// app/(main)/skills.tsx (Atualizado com formulário 'collapsible')
+// app/(main)/skills.tsx (Atualizado para a nova SkillForm)
 
 import React, { useState, useEffect, useCallback } from "react";
-import { SafeAreaView, Alert, Pressable } from "react-native"; // 1. Importa Pressable
+import { SafeAreaView, Alert } from "react-native";
 import { useColorScheme } from "nativewind";
 import { RefreshScrollView } from "@/components/RefreshScrollView";
 
@@ -17,9 +17,7 @@ import { HStack } from "@/components/ui/hstack";
 import { Icon } from "@/components/ui/icon";
 import { Button, ButtonText, ButtonSpinner } from "@/components/ui/button"; 
 import { Divider } from "@/components/ui/divider";
-
-// 2. Importar os ícones de Mais e Menos
-import { Award, Trash2, XCircle, PlusCircle, MinusCircle } from "lucide-react-native"; 
+import { Award, Trash2, XCircle } from "lucide-react-native";
 
 // --- Configuração da API ---
 const BASE_URL = "https://curriculo-express-beige.vercel.app/habilidades";
@@ -32,30 +30,23 @@ export default function SkillsScreen() {
   const backgroundColor = isDark ? "#0F172A" : "#DFEFF4";
   const iconColor = isDark ? "#94a3b8" : "#475569";
 
-  // --- 3. Estados ---
+  // --- Estados (showAddForm foi removido) ---
   const [skillsData, setSkillsData] = useState<SkillItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false); 
   const [editingItem, setEditingItem] = useState<SkillItem | null>(null);
 
-  // --- 4. NOVO ESTADO para controlar o formulário de "Adicionar" ---
-  const [showAddForm, setShowAddForm] = useState(false);
-
-  // --- 5. Lógica da API ---
+  // --- Lógica da API (sem alterações) ---
 
   // GET (Listar)
   const loadData = useCallback(async () => {
-    // ... (código do loadData, sem alteração)
     setIsLoading(true);
     setSkillsData([]);
     let responseBody = ""; 
     try {
       const response = await fetch(BASE_URL); 
       responseBody = await response.text(); 
-
-      if (!response.ok) {
-        throw new Error(responseBody);
-      }
+      if (!response.ok) throw new Error(responseBody);
       const data: SkillItem[] = JSON.parse(responseBody);
       setSkillsData(data);
     } catch (error) {
@@ -83,7 +74,6 @@ export default function SkillsScreen() {
 
   // POST (Criar)
   const handleCreate = async (formData: SkillFormData): Promise<boolean> => {
-    // ... (código do try/catch, sem alteração)
     setIsLoading(true);
     let responseBody = "";
     try {
@@ -92,21 +82,15 @@ export default function SkillsScreen() {
         nivel: formData.nivel,
         pessoaId: PESSOA_ID,
       });
-
       const response = await fetch(BASE_URL, { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: body,
       });
-
       responseBody = await response.text();
-      if (!response.ok) {
-        throw new Error(responseBody);
-      }
-
+      if (!response.ok) throw new Error(responseBody);
       Alert.alert("Sucesso!", "Nova habilidade adicionada.");
       loadData(); 
-      setShowAddForm(false); // <-- 6. Fecha o formulário após o sucesso
       return true; 
     } catch (error) {
       console.error(error);
@@ -126,7 +110,6 @@ export default function SkillsScreen() {
 
   // PUT (Atualizar)
   const handleUpdate = async (formData: SkillFormData): Promise<boolean> => {
-    // ... (código do handleUpdate, sem alteração)
     if (!editingItem) return false;
     setIsLoading(true);
     let responseBody = "";
@@ -136,19 +119,13 @@ export default function SkillsScreen() {
         nivel: formData.nivel,
         pessoaId: PESSOA_ID, 
       });
-
       const response = await fetch(`${BASE_URL}/${editingItem.id}`, { 
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: body,
       });
-
       responseBody = await response.text(); 
-      
-      if (!response.ok) {
-        throw new Error(responseBody);
-      }
-
+      if (!response.ok) throw new Error(responseBody);
       Alert.alert("Sucesso!", "Habilidade atualizada.");
       setEditingItem(null); 
       loadData(); 
@@ -171,20 +148,16 @@ export default function SkillsScreen() {
 
   // DELETE (Excluir)
   const handleDelete = async (id: string) => {
-    // ... (código do handleDelete, sem alteração)
     setIsLoading(true);
     let responseBody = "";
     try {
       const response = await fetch(`${BASE_URL}/${id}`, { 
         method: "DELETE",
       });
-
       responseBody = await response.text(); 
-      
       if (!response.ok && response.status !== 204) { 
         throw new Error(responseBody);
       }
-
       Alert.alert("Sucesso!", "Habilidade excluída.");
       loadData(); 
     } catch (error) {
@@ -219,7 +192,7 @@ export default function SkillsScreen() {
       >
         <Box className="px-5 py-5">
           
-          {/* --- 7. RENDERIZAÇÃO CONDICIONAL ATUALIZADA --- */}
+          {/* --- RENDERIZAÇÃO CONDICIONAL ATUALIZADA --- */}
           
           {/* Se estiver editando, mostra o formulário de EDIÇÃO */}
           {editingItem ? (
@@ -227,45 +200,22 @@ export default function SkillsScreen() {
               isLoading={isLoading}
               onSubmit={handleUpdate}
               initialData={editingItem}
-              onCancel={() => setEditingItem(null)} 
+              onCancel={() => setEditingItem(null)} // Botão de cancelar
             />
           ) : (
-            // Se NÃO estiver editando...
-            <>
-              {/* Mostra o GATILHO de "Adicionar Habilidade" */}
-              <Pressable onPress={() => {
-                  setShowAddForm((prev) => !prev); // Faz o TOOGLE (abre/fecha)
-                  setIsDeleting(false); // Garante que sai do modo de exclusão
-                }}>
-                <HStack className="items-center mb-4 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 justify-between">
-                  <Heading className="text-lg font-semibold text-black dark:text-white">
-                    Adicionar Habilidade
-                  </Heading>
-                  {/* Ícone dinâmico: muda entre + e - */}
-                  <Icon 
-                    as={showAddForm ? MinusCircle : PlusCircle} 
-                    size="md" 
-                    color={iconColor} 
-                  />
-                </HStack>
-              </Pressable>
-
-              {/* E SE showAddForm for true, mostra o formulário de CRIAÇÃO */}
-              {showAddForm && (
-                <SkillForm 
-                  isLoading={isLoading} 
-                  onSubmit={handleCreate} 
-                  onCancel={() => setShowAddForm(false)} // Passa o onCancel para fechar
-                />
-              )}
-            </>
+            // Se NÃO estiver editando, mostra o formulário de CRIAÇÃO
+            // (que agora começa fechado por padrão)
+            <SkillForm 
+              isLoading={isLoading} 
+              onSubmit={handleCreate} 
+            />
           )}
           {/* --- FIM DA ATUALIZAÇÃO --- */}
 
           
           <Divider className="my-4" />
 
-          {/* --- 8. Cabeçalho da Lista e Botão de Exclusão --- */}
+          {/* --- Cabeçalho da Lista e Botão de Exclusão --- */}
           <HStack className="items-center mb-6 justify-between">
             <HStack className="items-center">
               <Icon as={Award} size="xl" color={iconColor} className="mr-2" />
@@ -281,7 +231,6 @@ export default function SkillsScreen() {
               onPress={() => {
                 setIsDeleting((prev) => !prev);
                 setEditingItem(null); // Garante que sai do modo de edição
-                setShowAddForm(false); // 9. Esconde o form de adicionar
               }}
             >
               <Icon
@@ -308,7 +257,7 @@ export default function SkillsScreen() {
             </Text>
           )}
 
-          {/* --- 9. Lista de Cards com Props de CRUD --- */}
+          {/* --- Lista de Cards com Props de CRUD --- */}
           {skillsData.map((item) => (
             <SkillCard
               key={item.id}
@@ -316,8 +265,7 @@ export default function SkillsScreen() {
               isDeleting={isDeleting} 
               onEdit={(itemToEdit) => {
                 setEditingItem(itemToEdit);
-                setShowAddForm(false); // 10. Esconde o form de adicionar
-                setIsDeleting(false); // Garante que sai do modo de exclusão
+                setIsDeleting(false); 
               }} 
               onDelete={handleDelete} 
             />

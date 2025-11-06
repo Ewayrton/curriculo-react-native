@@ -1,11 +1,9 @@
-// app/(main)/work-exp.tsx (Corrigido para 'Already read')
-
 import React, { useState, useEffect, useCallback } from "react";
 import { SafeAreaView, Alert } from "react-native";
 import { useColorScheme } from "nativewind";
 import { RefreshScrollView } from "@/components/RefreshScrollView";
 
-// Importa os novos componentes de Experiência
+// Importa os componentes
 import { WorkExpCard, type WorkExpItem } from "@/components/WorkExpCard"; 
 import { WorkExpForm, type WorkExpFormData } from "@/components/WorkExpForm"; 
 
@@ -22,6 +20,7 @@ import { Building2, Trash2, XCircle } from "lucide-react-native";
 // --- Configuração da API ---
 const BASE_URL = "https://curriculo-express-beige.vercel.app/experiencias";
 const PESSOA_ID = "22"; 
+// --- Fim da Configuração ---
 
 export default function WorkExpScreen() {
   // Lógica de Tema
@@ -30,7 +29,7 @@ export default function WorkExpScreen() {
   const backgroundColor = isDark ? "#0F172A" : "#DFEFF4";
   const iconColor = isDark ? "#94a3b8" : "#475569";
 
-  // --- Estados ---
+  // --- Estados (showAddForm foi removido) ---
   const [workData, setWorkData] = useState<WorkExpItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false); 
@@ -38,32 +37,26 @@ export default function WorkExpScreen() {
 
   // --- Lógica da API ---
 
-  // GET (Listar) - FUNÇÃO ATUALIZADA
+  // GET (Listar)
   const loadData = useCallback(async () => {
     setIsLoading(true);
     setWorkData([]);
-    let responseBody = ""; // Variável para guardar o texto
+    let responseBody = ""; 
     try {
-      const response = await fetch(BASE_URL); //
-      responseBody = await response.text(); // Lê o corpo como texto UMA VEZ
-
-      if (!response.ok) {
-        // Se a resposta não foi OK, tenta parsear o corpo (que já lemos)
-        throw new Error(responseBody);
-      }
-
-      // Se a resposta FOI OK, parseia o corpo (que já lemos)
+      const response = await fetch(BASE_URL); 
+      responseBody = await response.text(); 
+      if (!response.ok) throw new Error(responseBody);
       const data: WorkExpItem[] = JSON.parse(responseBody);
       setWorkData(data);
     } catch (error) {
       console.error(error); 
       let errorMessage = "Não foi possível carregar os dados.";
-      // Tenta parsear o erro (caso seja JSON de erro)
       try {
         const errorJson = JSON.parse(responseBody);
         errorMessage = errorJson.message || "Erro do backend";
-      } catch (e) {
-        // Se não for JSON, é HTML ou texto
+      // --- CORREÇÃO AQUI (Linha ~59) ---
+      } catch { 
+      // --- FIM DA CORREÇÃO ---
         if (responseBody.includes("<!DOCTYPE html>")) {
           errorMessage = "Erro 500: O servidor quebrou.";
         } else if (responseBody) {
@@ -80,32 +73,23 @@ export default function WorkExpScreen() {
     loadData();
   }, [loadData]);
 
-  // POST (Criar) - FUNÇÃO ATUALIZADA
+  // POST (Criar)
   const handleCreate = async (formData: WorkExpFormData): Promise<boolean> => {
     setIsLoading(true);
     let responseBody = "";
     try {
       const body = JSON.stringify({
-        empresa: formData.empresa,
-        cargo: formData.cargo,
-        descricao: formData.descricao,
-        dataInicio: formData.dataInicio,
+        ...formData,
         dataFim: formData.dataFim || null,
         pessoaId: PESSOA_ID,
       });
-
-      const response = await fetch(BASE_URL, { //
+      const response = await fetch(BASE_URL, { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: body,
       });
-
-      responseBody = await response.text(); // Lê o corpo UMA VEZ
-
-      if (!response.ok) {
-        throw new Error(responseBody);
-      }
-
+      responseBody = await response.text();
+      if (!response.ok) throw new Error(responseBody);
       Alert.alert("Sucesso!", "Nova experiência adicionada.");
       loadData(); 
       return true; 
@@ -115,12 +99,10 @@ export default function WorkExpScreen() {
       try {
         const errorJson = JSON.parse(responseBody);
         errorMessage = errorJson.message || "Erro ao salvar";
-      } catch (e) {
-        if (responseBody.includes("<!DOCTYPE html>")) {
-          errorMessage = "Erro 500: O servidor quebrou.";
-        } else if (responseBody) {
-          errorMessage = responseBody;
-        }
+      // --- CORREÇÃO AQUI (Linha ~102) ---
+      } catch {
+      // --- FIM DA CORREÇÃO ---
+        errorMessage = responseBody || "Erro desconhecido";
       }
       Alert.alert("Erro", errorMessage);
       return false; 
@@ -129,33 +111,24 @@ export default function WorkExpScreen() {
     }
   };
 
-  // PUT (Atualizar) - FUNÇÃO ATUALIZADA
+  // PUT (Atualizar)
   const handleUpdate = async (formData: WorkExpFormData): Promise<boolean> => {
     if (!editingItem) return false;
     setIsLoading(true);
     let responseBody = "";
     try {
       const body = JSON.stringify({
-        empresa: formData.empresa,
-        cargo: formData.cargo,
-        descricao: formData.descricao,
-        dataInicio: formData.dataInicio,
+        ...formData,
         dataFim: formData.dataFim || null,
         pessoaId: PESSOA_ID, 
       });
-
-      const response = await fetch(`${BASE_URL}/${editingItem.id}`, { //
+      const response = await fetch(`${BASE_URL}/${editingItem.id}`, { 
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: body,
       });
-
-      responseBody = await response.text(); // Lê o corpo UMA VEZ
-      
-      if (!response.ok) {
-        throw new Error(responseBody);
-      }
-
+      responseBody = await response.text(); 
+      if (!response.ok) throw new Error(responseBody);
       Alert.alert("Sucesso!", "Experiência atualizada.");
       setEditingItem(null); 
       loadData(); 
@@ -166,12 +139,10 @@ export default function WorkExpScreen() {
       try {
         const errorJson = JSON.parse(responseBody);
         errorMessage = errorJson.message || "Erro ao atualizar";
-      } catch (e) {
-        if (responseBody.includes("<!DOCTYPE html>")) {
-          errorMessage = "Erro 500: O servidor quebrou.";
-        } else if (responseBody) {
-          errorMessage = responseBody;
-        }
+      // --- CORREÇÃO AQUI (Linha ~140) ---
+      } catch {
+      // --- FIM DA CORREÇÃO ---
+         errorMessage = responseBody || "Erro desconhecido";
       }
       Alert.alert("Erro", errorMessage);
       return false; 
@@ -180,21 +151,18 @@ export default function WorkExpScreen() {
     }
   };
 
-  // DELETE (Excluir) - FUNÇÃO ATUALIZADA
+  // DELETE (Excluir)
   const handleDelete = async (id: string) => {
     setIsLoading(true);
     let responseBody = "";
     try {
-      const response = await fetch(`${BASE_URL}/${id}`, { //
+      const response = await fetch(`${BASE_URL}/${id}`, { 
         method: "DELETE",
       });
-
-      responseBody = await response.text(); // Lê o corpo UMA VEZ
-      
-      if (!response.ok && response.status !== 204) { // 204 (No Content) é um sucesso
+      responseBody = await response.text(); 
+      if (!response.ok && response.status !== 204) { 
         throw new Error(responseBody);
       }
-
       Alert.alert("Sucesso!", "Experiência excluída.");
       loadData(); 
     } catch (error) {
@@ -203,7 +171,9 @@ export default function WorkExpScreen() {
       try {
         const errorJson = JSON.parse(responseBody);
         errorMessage = errorJson.message || "Erro ao excluir";
-      } catch (e) {
+      // --- CORREÇÃO AQUI (Linha ~170) ---
+      } catch {
+      // --- FIM DA CORREÇÃO ---
         if (responseBody.includes("<!DOCTYPE html>")) {
           errorMessage = "Erro 500: O servidor quebrou.";
         } else if (responseBody && responseBody.length > 0) {
@@ -219,7 +189,6 @@ export default function WorkExpScreen() {
     }
   };
 
-  // ... (O JSX de renderização permanece o MESMO)
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: backgroundColor }}>
       <RefreshScrollView
@@ -230,6 +199,7 @@ export default function WorkExpScreen() {
       >
         <Box className="px-5 py-5">
           
+          {/* --- Renderização Condicional ATUALIZADA --- */}
           {editingItem ? (
             <WorkExpForm
               isLoading={isLoading}
@@ -238,16 +208,20 @@ export default function WorkExpScreen() {
               onCancel={() => setEditingItem(null)} 
             />
           ) : (
-            <WorkExpForm isLoading={isLoading} onSubmit={handleCreate} />
+            <WorkExpForm 
+              isLoading={isLoading} 
+              onSubmit={handleCreate} 
+            />
           )}
           
           <Divider className="my-4" />
 
+          {/* --- Cabeçalho da Lista e Botão de Exclusão (TÍTULO ATUALIZADO) --- */}
           <HStack className="items-center mb-6 justify-between">
             <HStack className="items-center">
               <Icon as={Building2} size="xl" color={iconColor} className="mr-2" />
               <Heading className="text-3xl font-bold text-black dark:text-white">
-                Experiências
+                Experiência {/* <-- TÍTULO MUDADO */}
               </Heading>
             </HStack>
             
@@ -272,22 +246,30 @@ export default function WorkExpScreen() {
             </Button>
           </HStack>
 
+          {/* Indicador de Loading */}
           {isLoading && workData.length === 0 && (
              <ButtonSpinner size="large" className="self-center mt-10" />
           )}
 
+          {/* Mensagem de lista vazia */}
           {!isLoading && workData.length === 0 && (
+            // --- CORREÇÃO AQUI (Linha ~260) ---
             <Text className="text-center text-slate-500 dark:text-slate-400">
               Nenhuma experiência profissional encontrada.
             </Text>
+            // --- FIM DA CORREÇÃO ---
           )}
 
+          {/* --- Lista de Cards --- */}
           {workData.map((item) => (
             <WorkExpCard
               key={item.id}
               item={item}
               isDeleting={isDeleting} 
-              onEdit={setEditingItem} 
+              onEdit={(itemToEdit) => {
+                setEditingItem(itemToEdit);
+                setIsDeleting(false); 
+              }} 
               onDelete={handleDelete} 
             />
           ))}

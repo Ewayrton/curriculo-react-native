@@ -3,9 +3,9 @@ import { SafeAreaView, Alert } from "react-native";
 import { useColorScheme } from "nativewind";
 import { RefreshScrollView } from "@/components/RefreshScrollView";
 
-// Importa os novos componentes
-import { AcademicCard, type AcademicItem } from "@/components/AcademicCard";
-import { AcademicForm, type AcademicFormData } from "@/components/AcademicForm";
+// Importa os componentes
+import { AcademicCard, type AcademicItem } from "@/components/AcademicCard"; 
+import { AcademicForm, type AcademicFormData } from "@/components/AcademicForm"; 
 
 // Importa componentes da página
 import { Box } from "@/components/ui/box";
@@ -13,15 +13,14 @@ import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { HStack } from "@/components/ui/hstack";
 import { Icon } from "@/components/ui/icon";
-import { Button, ButtonText, ButtonSpinner } from "@/components/ui/button";
+import { Button, ButtonText, ButtonSpinner } from "@/components/ui/button"; 
 import { Divider } from "@/components/ui/divider";
 import { GraduationCap, Trash2, XCircle } from "lucide-react-native";
 
 // --- Configuração da API ---
 const BASE_URL = "https://curriculo-express-beige.vercel.app/educacao";
-const PESSOA_ID = "22"; // ID fixo para criação do meu perfil de pessoa
-
-// (Os tipos AcademicItem e AcademicFormData são importados dos componentes)
+const PESSOA_ID = "22"; 
+// --- Fim da Configuração ---
 
 export default function AcademicScreen() {
   // Lógica de Tema
@@ -30,34 +29,38 @@ export default function AcademicScreen() {
   const backgroundColor = isDark ? "#0F172A" : "#DFEFF4";
   const iconColor = isDark ? "#94a3b8" : "#475569";
 
-  // --- Estados do CRUD ---
+  // --- Estados (showAddForm foi removido) ---
   const [academicData, setAcademicData] = useState<AcademicItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false); 
   const [editingItem, setEditingItem] = useState<AcademicItem | null>(null);
 
-  // --- Lógica da API ---
-
+  // --- Lógica da API (sem alterações) ---
   // GET (Listar)
   const loadData = useCallback(async () => {
     setIsLoading(true);
     setAcademicData([]);
+    let responseBody = ""; 
     try {
-      const response = await fetch(`${BASE_URL}/pessoa/${PESSOA_ID}`); //
-      if (!response.ok) {
-        throw new Error("Falha ao buscar dados");
-      }
-      const data: AcademicItem[] = await response.json();
+      const response = await fetch(`${BASE_URL}/pessoa/${PESSOA_ID}`); 
+      responseBody = await response.text(); 
+      if (!response.ok) throw new Error(responseBody);
+      const data: AcademicItem[] = JSON.parse(responseBody);
       setAcademicData(data);
     } catch (error) {
-      // --- CORREÇÃO AQUI ---
-      console.error(error);
+      console.error(error); 
       let errorMessage = "Não foi possível carregar os dados.";
-      if (error instanceof Error) {
-        errorMessage = error.message;
+      try {
+        const errorJson = JSON.parse(responseBody);
+        errorMessage = errorJson.message || "Erro do backend";
+      } catch (e) {
+        if (responseBody.includes("<!DOCTYPE html>")) {
+          errorMessage = "Erro 500: O servidor quebrou.";
+        } else if (responseBody) {
+          errorMessage = responseBody;
+        }
       }
-      Alert.alert("Erro ao carregar", errorMessage);
-      // --- FIM DA CORREÇÃO (Linha ~89) ---
+      Alert.alert("Erro ao carregar", errorMessage); 
     } finally {
       setIsLoading(false);
     }
@@ -70,35 +73,34 @@ export default function AcademicScreen() {
   // POST (Criar)
   const handleCreate = async (formData: AcademicFormData): Promise<boolean> => {
     setIsLoading(true);
+    let responseBody = "";
     try {
       const body = JSON.stringify({
         ...formData,
         dataFim: formData.dataFim || null,
         pessoaId: PESSOA_ID,
       });
-
-      const response = await fetch(BASE_URL, { //
+      const response = await fetch(BASE_URL, { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: body,
       });
-
-      if (!response.ok) {
-        throw new Error(await response.text());
-      }
+      responseBody = await response.text();
+      if (!response.ok) throw new Error(responseBody);
       Alert.alert("Sucesso!", "Nova formação adicionada.");
       loadData(); 
       return true; 
     } catch (error) {
-      // --- CORREÇÃO AQUI ---
       console.error(error);
       let errorMessage = "Não foi possível salvar.";
-      if (error instanceof Error) {
-        errorMessage = error.message;
+      try {
+        const errorJson = JSON.parse(responseBody);
+        errorMessage = errorJson.message || "Erro ao salvar";
+      } catch (e) {
+        errorMessage = responseBody || "Erro desconhecido";
       }
       Alert.alert("Erro", errorMessage);
-      return false; // Falha
-      // --- FIM DA CORREÇÃO (Linha ~122) ---
+      return false; 
     } finally {
       setIsLoading(false);
     }
@@ -108,36 +110,35 @@ export default function AcademicScreen() {
   const handleUpdate = async (formData: AcademicFormData): Promise<boolean> => {
     if (!editingItem) return false;
     setIsLoading(true);
+    let responseBody = "";
     try {
       const body = JSON.stringify({
         ...formData,
         dataFim: formData.dataFim || null,
-        pessoaId: PESSOA_ID,
+        pessoaId: PESSOA_ID, 
       });
-
-      const response = await fetch(`${BASE_URL}/${editingItem.id}`, { //
+      const response = await fetch(`${BASE_URL}/${editingItem.id}`, { 
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: body,
       });
-
-      if (!response.ok) {
-        throw new Error(await response.text());
-      }
+      responseBody = await response.text(); 
+      if (!response.ok) throw new Error(responseBody);
       Alert.alert("Sucesso!", "Formação atualizada.");
       setEditingItem(null); 
       loadData(); 
       return true; 
     } catch (error) {
-      // --- CORREÇÃO AQUI ---
       console.error(error);
       let errorMessage = "Não foi possível atualizar.";
-      if (error instanceof Error) {
-        errorMessage = error.message;
+      try {
+        const errorJson = JSON.parse(responseBody);
+        errorMessage = errorJson.message || "Erro ao atualizar";
+      } catch (e) {
+         errorMessage = responseBody || "Erro desconhecido";
       }
       Alert.alert("Erro", errorMessage);
-      return false; // Falha
-      // --- FIM DA CORREÇÃO (Linha ~156, próxima da 144) ---
+      return false; 
     } finally {
       setIsLoading(false);
     }
@@ -146,30 +147,33 @@ export default function AcademicScreen() {
   // DELETE (Excluir)
   const handleDelete = async (id: string) => {
     setIsLoading(true);
+    let responseBody = "";
     try {
-      const response = await fetch(`${BASE_URL}/${id}`, { //
+      const response = await fetch(`${BASE_URL}/${id}`, { 
         method: "DELETE",
       });
-
-      if (!response.ok) { // Espera 204 No Content
-        throw new Error(await response.text());
+      responseBody = await response.text(); 
+      if (!response.ok && response.status !== 204) { 
+        throw new Error(responseBody);
       }
       Alert.alert("Sucesso!", "Formação excluída.");
       loadData(); 
     } catch (error) {
-      // --- CORREÇÃO AQUI (Bônus, esta linha também daria erro) ---
       console.error(error);
       let errorMessage = "Não foi possível excluir.";
-      if (error instanceof Error) {
-        // Verifica se o erro é o HTML do Vercel
-        if (error.message.includes("<!DOCTYPE html>")) {
-           errorMessage = "O servidor retornou um erro 500 (Internal Server Error).";
-        } else {
-           errorMessage = error.message;
+      try {
+        const errorJson = JSON.parse(responseBody);
+        errorMessage = errorJson.message || "Erro ao excluir";
+      } catch (e) {
+        if (responseBody.includes("<!DOCTYPE html>")) {
+          errorMessage = "Erro 500: O servidor quebrou.";
+        } else if (responseBody && responseBody.length > 0) {
+          errorMessage = responseBody;
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
         }
       }
       Alert.alert("Erro", errorMessage);
-      // --- FIM DA CORREÇÃO ---
     } finally {
       setIsLoading(false);
       setIsDeleting(false); 
@@ -186,35 +190,36 @@ export default function AcademicScreen() {
       >
         <Box className="px-5 py-5">
           
-          {/* --- Renderização Condicional do Formulário --- */}
+          {/* --- Renderização Condicional ATUALIZADA --- */}
           {editingItem ? (
-            // Modo de Edição
             <AcademicForm
               isLoading={isLoading}
               onSubmit={handleUpdate}
               initialData={editingItem}
-              onCancel={() => setEditingItem(null)} // Botão de cancelar
+              onCancel={() => setEditingItem(null)} 
             />
           ) : (
-            // Modo de Criação
-            <AcademicForm isLoading={isLoading} onSubmit={handleCreate} />
+            <AcademicForm 
+              isLoading={isLoading} 
+              onSubmit={handleCreate} 
+            />
           )}
           
           <Divider className="my-4" />
 
-          {/* --- Cabeçalho da Lista e Botão de Exclusão --- */}
+          {/* --- Cabeçalho da Lista e Botão de Exclusão (TÍTULO ATUALIZADO) --- */}
           <HStack className="items-center mb-6 justify-between">
             <HStack className="items-center">
               <Icon as={GraduationCap} size="xl" color={iconColor} className="mr-2" />
               <Heading className="text-3xl font-bold text-black dark:text-white">
-                Formações
+                Formação Acadêmica {/* <-- TÍTULO MUDADO */}
               </Heading>
             </HStack>
             
             <Button
               size="sm"
               variant="link"
-              action={isDeleting ? "primary" : "secondary"} // Muda a cor
+              action={isDeleting ? "primary" : "secondary"} 
               onPress={() => {
                 setIsDeleting((prev) => !prev);
                 setEditingItem(null); 
@@ -240,17 +245,20 @@ export default function AcademicScreen() {
           {/* Mensagem de lista vazia */}
           {!isLoading && academicData.length === 0 && (
             <Text className="text-center text-slate-500 dark:text-slate-400">
-              Nenhuma formação acadêmica encontrada.
+              Nenhuma formação encontrada.
             </Text>
           )}
 
-          {/* --- Lista de Cards com Props de CRUD --- */}
+          {/* --- Lista de Cards --- */}
           {academicData.map((item) => (
             <AcademicCard
               key={item.id}
               item={item}
               isDeleting={isDeleting} 
-              onEdit={setEditingItem} 
+              onEdit={(itemToEdit) => {
+                setEditingItem(itemToEdit);
+                setIsDeleting(false); 
+              }} 
               onDelete={handleDelete} 
             />
           ))}
