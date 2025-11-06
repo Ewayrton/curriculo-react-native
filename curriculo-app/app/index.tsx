@@ -1,5 +1,3 @@
-// app/index.tsx (Atualizado)
-
 import React from "react";
 import { Image } from "react-native";
 import { Text } from "@/components/ui/text";
@@ -23,10 +21,7 @@ export default function IndexScreen() {
   return (
     // 2. Passar a função 'onRefresh' para o GradientBackground
     <GradientBackground onRefresh={loadData}>
-      {/* O Box interno continua igual. 
-        O ScrollView dentro do GradientBackground usará 'flexGrow: 1',
-        então este Box precisa de 'flex: 1' para centralizar o conteúdo.
-      */}
+      
       <Box className="flex-1 justify-center items-center px-10">
 
         {/* Título com animação */}

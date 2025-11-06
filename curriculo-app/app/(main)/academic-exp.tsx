@@ -53,7 +53,9 @@ export default function AcademicScreen() {
       try {
         const errorJson = JSON.parse(responseBody);
         errorMessage = errorJson.message || "Erro do backend";
-      } catch (e) {
+      // --- CORREÇÃO AQUI (Linha 56) ---
+      } catch {
+      // --- FIM DA CORREÇÃO ---
         if (responseBody.includes("<!DOCTYPE html>")) {
           errorMessage = "Erro 500: O servidor quebrou.";
         } else if (responseBody) {
@@ -96,7 +98,9 @@ export default function AcademicScreen() {
       try {
         const errorJson = JSON.parse(responseBody);
         errorMessage = errorJson.message || "Erro ao salvar";
-      } catch (e) {
+      // --- CORREÇÃO AQUI (Linha 99) ---
+      } catch {
+      // --- FIM DA CORREÇÃO ---
         errorMessage = responseBody || "Erro desconhecido";
       }
       Alert.alert("Erro", errorMessage);
@@ -134,7 +138,9 @@ export default function AcademicScreen() {
       try {
         const errorJson = JSON.parse(responseBody);
         errorMessage = errorJson.message || "Erro ao atualizar";
-      } catch (e) {
+      // --- CORREÇÃO AQUI (Linha 137) ---
+      } catch {
+      // --- FIM DA CORREÇÃO ---
          errorMessage = responseBody || "Erro desconhecido";
       }
       Alert.alert("Erro", errorMessage);
@@ -164,7 +170,9 @@ export default function AcademicScreen() {
       try {
         const errorJson = JSON.parse(responseBody);
         errorMessage = errorJson.message || "Erro ao excluir";
-      } catch (e) {
+      // --- CORREÇÃO AQUI (Linha 167) ---
+      } catch {
+      // --- FIM DA CORREÇÃO ---
         if (responseBody.includes("<!DOCTYPE html>")) {
           errorMessage = "Erro 500: O servidor quebrou.";
         } else if (responseBody && responseBody.length > 0) {
