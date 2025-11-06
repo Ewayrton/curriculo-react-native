@@ -1,7 +1,5 @@
-// components/WorkExpForm.tsx (Atualizado com Animação e 'Accordion')
-
 import React, { useState, useEffect } from "react";
-import { Alert, Pressable } from "react-native";
+import { Alert, Pressable } from "react-native"; // 1. Importar Pressable
 import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
@@ -13,9 +11,11 @@ import { Button, ButtonText, ButtonSpinner } from "@/components/ui/button";
 import { useColorScheme } from "nativewind";
 import type { WorkExpItem } from "@/components/WorkExpCard";
 
-// 1. Importar Moti e ícones
+// 2. Importar o DatePicker e novos ícones
+import DateTimePicker, { type DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { MotiView, AnimatePresence } from "moti"; 
-import { PlusCircle, Edit3, MinusCircle, Building2 } from "lucide-react-native";
+import { PlusCircle, Edit3, MinusCircle, CalendarDays } from "lucide-react-native";
+import { Text } from "@/components/ui/text";
 
 // Tipo para os dados do formulário
 export type WorkExpFormData = {
@@ -35,6 +35,11 @@ const initialFormState: WorkExpFormData = {
   dataFim: "",
 };
 
+// Helper para formatar a data (Date -> YYYY-MM-DD)
+const formatDate = (date: Date): string => {
+  return date.toISOString().split('T')[0];
+};
+
 // Props
 type WorkExpFormProps = {
   isLoading: boolean;
@@ -52,12 +57,17 @@ export function WorkExpForm({
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const iconColor = isDark ? "#94a3b8" : "#475569";
+  const textColor = isDark ? "#FFFFFF" : "#000000";
+  const placeholderColor = isDark ? "#94a3b8" : "#94a3b8";
 
   const isEditMode = !!initialData;
   const [formState, setFormState] = useState(initialFormState);
-
-  // 2. Estado interno para controlar se o acordeão está aberto
   const [isOpen, setIsOpen] = useState(isEditMode); 
+
+  // --- 3. Novos Estados para o DatePicker ---
+  const [showPicker, setShowPicker] = useState(false);
+  const [dateToEdit, setDateToEdit] = useState(new Date());
+  const [currentField, setCurrentField] = useState<'dataInicio' | 'dataFim' | null>(null);
 
   // Efeito para preencher o formulário E ABRIR
   useEffect(() => {
@@ -69,10 +79,10 @@ export function WorkExpForm({
         dataInicio: initialData.dataInicio,
         dataFim: initialData.dataFim || "", 
       });
-      setIsOpen(true); // Abre o formulário ao entrar no modo de edição
+      setIsOpen(true);
     } else {
       setFormState(initialFormState); 
-      setIsOpen(false); // Fecha ao sair do modo de edição (via 'onCancel')
+      setIsOpen(false);
     }
   }, [initialData]);
 
@@ -90,23 +100,66 @@ export function WorkExpForm({
 
     if (!isEditMode && success) {
       setFormState(initialFormState);
-      setIsOpen(false); // Fecha o formulário após criar com sucesso
+      setIsOpen(false);
     }
   };
   
-  // Função de Cancelar atualizada
   const internalOnCancel = () => {
-    if (onCancel) { // Modo de edição
+    if (onCancel) { 
       onCancel();
-    } else { // Modo de adição
+    } else { 
       setIsOpen(false);
     }
   };
 
+  // --- 4. Funções para o DatePicker ---
+  const showDatePicker = (field: 'dataInicio' | 'dataFim') => {
+    const currentDateString = formState[field];
+    const date = currentDateString ? new Date(currentDateString.replace(/-/g, '/')) : new Date();
+    
+    setDateToEdit(date);
+    setCurrentField(field);
+    setShowPicker(true);
+  };
+
+  const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    setShowPicker(false); 
+
+    if (event.type === 'set' && selectedDate && currentField) {
+      const formattedDate = formatDate(selectedDate);
+      handleFormChange(currentField, formattedDate);
+      setDateToEdit(selectedDate);
+    }
+  };
+  
+  const DateInput = ({ field, placeholder }: { field: 'dataInicio' | 'dataFim', placeholder: string }) => {
+    const value = formState[field];
+    return (
+      <Pressable onPress={() => showDatePicker(field)}>
+        <HStack
+          className="border rounded-md items-center w-full"
+          style={{
+            borderColor: isDark ? "#475569" : "#CBD5E1",
+            backgroundColor: isDark ? "#1E293B" : "#FFFFFF",
+            height: 50,
+            paddingHorizontal: 12,
+            justifyContent: 'space-between'
+          }}
+        >
+          <Text style={{ color: value ? textColor : placeholderColor }}>
+            {value || placeholder}
+          </Text>
+          <Icon as={CalendarDays} size="sm" color={iconColor} />
+        </HStack>
+      </Pressable>
+    );
+  };
+  // --- Fim das Funções do DatePicker ---
+
   return (
     <Card className="w-full mb-6 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
       
-      {/* 3. CABEÇALHO CLICÁVEL (O Gatilho) */}
+      {/* CABEÇALHO CLICÁVEL (O Gatilho) */}
       <Pressable 
         onPress={() => {
           if (!isEditMode) {
@@ -118,7 +171,7 @@ export function WorkExpForm({
         <HStack className="items-center justify-between">
           <HStack className="items-center">
             <Icon
-              as={isEditMode ? Edit3 : (isOpen ? MinusCircle : PlusCircle)} // Ícone dinâmico
+              as={isEditMode ? Edit3 : (isOpen ? MinusCircle : PlusCircle)}
               size="md"
               color={iconColor}
               className="mr-2.5"
@@ -130,12 +183,12 @@ export function WorkExpForm({
         </HStack>
       </Pressable>
 
-      {/* 4. CONTEÚDO ANIMADO */}
+      {/* CONTEÚDO ANIMADO */}
       <AnimatePresence>
         {isOpen && (
           <MotiView
             from={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 360 }} // Altura maior para 4 inputs + 1 textarea
+            animate={{ opacity: 1, height: 380 }} // Altura maior para 4 inputs + 1 textarea
             exit={{ opacity: 0, height: 0 }}
             transition={{ type: "timing", duration: 300 }}
             style={{ overflow: 'hidden' }}
@@ -165,22 +218,11 @@ export function WorkExpForm({
                   className="text-black dark:text-white"
                 />
               </Textarea>
-              <Input>
-                <InputField
-                  placeholder="Data Início (YYYY-MM-DD)"
-                  value={formState.dataInicio}
-                  onChangeText={(v) => handleFormChange("dataInicio", v)}
-                  className="text-black dark:text-white"
-                />
-              </Input>
-              <Input>
-                <InputField
-                  placeholder="Data Fim (YYYY-MM-DD, ou deixe em branco)"
-                  value={formState.dataFim}
-                  onChangeText={(v) => handleFormChange("dataFim", v)}
-                  className="text-black dark:text-white"
-                />
-              </Input>
+              
+              {/* --- 5. Inputs de Data Substituídos --- */}
+              <DateInput field="dataInicio" placeholder="Data Início (YYYY-MM-DD)" />
+              <DateInput field="dataFim" placeholder="Data Fim (YYYY-MM-DD, ou deixe em branco)" />
+              {/* --- Fim da Substituição --- */}
               
               <HStack space="md">
                 {(isEditMode) && ( 
@@ -210,6 +252,16 @@ export function WorkExpForm({
           </MotiView>
         )}
       </AnimatePresence>
+
+      {/* --- 6. Renderiza o DatePicker (ele é um modal) --- */}
+      {showPicker && (
+        <DateTimePicker
+          value={dateToEdit}
+          mode="date"
+          display="default"
+          onChange={onChangeDate}
+        />
+      )}
     </Card>
   );
 }

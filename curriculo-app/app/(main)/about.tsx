@@ -22,9 +22,10 @@ import {
   TerminalSquare,
   Zap, // Novo ícone para "features"
   Database, // Novo ícone para "API/backend"
+  SlidersHorizontal, // <<< 1. NOVO ÍCONE ADICIONADO
 } from "lucide-react-native";
 
-// 1. Dados das TECNOLOGIAS (baseado no package.json)
+// 2. Dados das TECNOLOGIAS (baseado no package.json)
 const techGroups = [
   {
     title: "Core & Frameworks",
@@ -57,6 +58,16 @@ const techGroups = [
     icon: Sparkles,
     techs: ["Moti", "Gorhom BottomSheet", "Expo Haptics"],
   },
+  // <<< 3. NOVO GRUPO ADICIONADO >>>
+  {
+    title: "Formulários & Componentes Nativos",
+    icon: SlidersHorizontal,
+    techs: [
+      "@react-native-community/datetimepicker",
+      "@react-native-picker/picker",
+    ],
+  },
+  // <<< FIM DA ATUALIZAÇÃO >>>
   {
     title: "Ferramentas & Configuração",
     icon: TerminalSquare,
@@ -64,27 +75,29 @@ const techGroups = [
   },
 ];
 
-// 2. Dados das FUNCIONALIDADES EXTRAS (como solicitado)
+// 4. Dados das FUNCIONALIDADES EXTRAS (ATUALIZADO)
 const extraFeatures = [
   {
     title: "Experiência do Usuário",
     icon: Zap,
-    action: "success", // Badge verde
+    action: "info", // Badge Azul
     items: [
       "Dark Mode / Light Mode",
       "Pull-to-Refresh (todas as telas)",
       "Animações fluídas (Moti)",
+      "Formulários \"Acordeão\" Animados", // <-- NOVO
+      "Seletores Nativos (Data & Nível)", // <-- NOVO
     ],
   },
   {
-    title: "Gerenciamento de Conteúdo (Planejado)",
+    title: "Gerenciamento de Conteúdo", 
     icon: Database,
-    action: "warning", // Badge amarelo
+    action: "success", // Badge Verde
     items: [
-      "Integração com API Backend",
-      "CMS para Habilidades",
-      "CMS para Experiências Profissionais",
-      "CMS para Experiências Acadêmicas",
+      "Integração com API Node/Express", 
+      "CRUD de Formação", 
+      "CRUD de Experiência", 
+      "CRUD de Habilidades", 
     ],
   },
 ];
@@ -159,7 +172,7 @@ export default function AboutScreen() {
               </Box>
             </Card>
           ))}
-  
+      
           <HStack className="items-center mt-8 mb-2">
             <Icon as={Zap} size="xl" color={iconColor} className="mr-2" />
             <Heading className="text-3xl font-bold text-black dark:text-white">
@@ -188,26 +201,33 @@ export default function AboutScreen() {
                 </Heading>
               </HStack>
               <Box className="flex-row flex-wrap">
-                {group.items.map((item) => (
-                  <Badge
-                    key={item}
-                    // @ts-ignore - Permite usar "success" e "warning"
-                    action={group.action} 
-                    variant="solid"
-                    className="mr-2 mb-2 rounded-md" 
-                    // Aplica a cor correta com base na "action"
-                  >
-                    <BadgeText 
-                      className={
-                        group.action === "success" 
-                          ? "text-green-800 dark:text-green-200"
-                          : "text-yellow-800 dark:text-yellow-200"
-                      }
+                {group.items.map((item) => {
+                  
+                  // --- 5. LÓGICA DE COR DO BADGE ATUALIZADA ---
+                  const action = group.action || "info";
+                  let textColor = "text-yellow-800 dark:text-yellow-200"; // Padrão 'warning'
+                  if (action === "success") {
+                    textColor = "text-green-800 dark:text-green-200";
+                  } else if (action === "info") {
+                    textColor = "text-blue-800 dark:text-blue-200";
+                  }
+
+                  return (
+                    <Badge
+                      key={item}
+                      // @ts-ignore
+                      action={action} 
+                      variant="solid"
+                      className="mr-2 mb-2 rounded-md" 
                     >
-                      {item}
-                    </BadgeText>
-                  </Badge>
-                ))}
+                      <BadgeText 
+                        className={textColor}
+                      >
+                        {item}
+                      </BadgeText>
+                    </Badge>
+                  );
+                })}
               </Box>
             </Card>
           ))}

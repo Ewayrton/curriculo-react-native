@@ -212,7 +212,7 @@ export default function AcademicScreen() {
             <HStack className="items-center">
               <Icon as={GraduationCap} size="xl" color={iconColor} className="mr-2" />
               <Heading className="text-3xl font-bold text-black dark:text-white">
-                Formação Acadêmica {/* <-- TÍTULO MUDADO */}
+                Formação {/* <-- TÍTULO MUDADO */}
               </Heading>
             </HStack>
             
